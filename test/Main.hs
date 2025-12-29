@@ -5,7 +5,7 @@ import Day2 ( getInvalidIds, getMultiInvalidIds )
 import Day3 ( makeCells, getMaxPower )
 import Day4 ( isAvailable, recurseAvailable )
 import Day5 ( parseRangesIngred, fulfill, Range (Range), removeOverlaps, lengthOverlaps )
-import Day6 ( makeTable, makeQuestion, evaluateQuestion, makeCephTable, Question (Add, Mul) )
+import Day6 ( evalQuestion, makeTable, makeQuestions, makeCeph, Question (Add, Mul) )
 
 import Test.HUnit (assertEqual, runTestTT, Test (TestList), Test (TestLabel), Test (TestCase) )
 import Test.HUnit (Counts)
@@ -85,16 +85,17 @@ test_day6_part1 :: IO ()
 test_day6_part1 = do
     text <- readFile "test_inputs/day6.txt"
     let table = makeTable text
-    let questions = map makeQuestion table
-    let answer = sum $ map evaluateQuestion questions
+    let questions = makeQuestions table
+    let answer = sum $ map evalQuestion questions
     assertEqual "" 4277556 answer 
 
 test_day6_part2 :: IO ()
 test_day6_part2 = do
     text <- readFile "test_inputs/day6.txt"
-    let questions = makeCephTable text
+    let table = makeTable text
+    let questions = makeCeph table
     assertEqual "" [Mul [1, 24, 356], Add [369, 248, 8], Mul [32, 581, 175], Add [623, 431, 4]]  questions 
-    let ceph_answer = sum $ map evaluateQuestion questions
+    let ceph_answer = sum $ map evalQuestion questions
     assertEqual "" 3263827 ceph_answer 
 
 main :: IO Counts
