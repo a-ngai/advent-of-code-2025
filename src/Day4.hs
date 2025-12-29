@@ -25,7 +25,7 @@ makeSurround (hi:rest) = (map . map) getSurround coor
     coor :: [[(Int, Int)]]
     coor = map (\x -> map (\y -> (x, y)) [1..(ny-2)]) [1..(nx-2)]
     getSurroundCoor :: (Int, Int) -> [(Int, Int)]
-    getSurroundCoor (x,y) = filter (\tup -> tup /= (x, y)) $ surroundingTiles (x,y)
+    getSurroundCoor (x,y) = filter (/= (x, y)) $ surroundingTiles (x,y)
     surroundingTiles (x,y) = concat $ map (\_x -> zip (repeat _x) [(y-1)..(y+1)]) [(x-1)..(x+1)]
     select :: [[a]] -> (Int, Int) -> [a]
     select array (x, y) = (take 1 . drop y . concat . take 1 . drop x) array
