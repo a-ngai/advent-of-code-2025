@@ -1,4 +1,4 @@
-module Main (main) where
+module Main ( main ) where
 
 import Day1 ( getPassword, getClicks,)
 import Day2 ( getInvalidIds, getMultiInvalidIds )
@@ -7,11 +7,12 @@ import Day4 ( isAvailable, recurseAvailable )
 import Day5 ( parseRangesIngred, fulfill, Range (Range), removeOverlaps, lengthOverlaps )
 import Day6 ( evalQuestion, makeTable, makeQuestions, makeCeph, Question (Add, Mul) )
 import Day7 ( Path (Path), findStartingSplit, evolveBeam, findSplits, drawChart )
+import Day8 ( makeCoor, findNClosest, generatePairs, continueCircuits, makeCircuits, Coor (Coor), Pair (Pair) )
 
-import Data.List ( intersperse )
+import Data.List ( intersperse, sortBy )
 
-import Test.HUnit (assertEqual, runTestTT, Test (TestList), Test (TestLabel), Test (TestCase) )
-import Test.HUnit (Counts)
+import Test.HUnit ( assertEqual, runTestTT, Test (TestList), Test (TestLabel), Test (TestCase) )
+import Test.HUnit ( Counts )
 
 test_day1_part1 :: IO ()
 test_day1_part1 = do
@@ -123,6 +124,24 @@ test_day7_part2 = do
     let answer = sum $ map (\(Path num _) -> num) $ concat $ take 1 $ reverse beam
     assertEqual "" 40 answer
 
+test_day8_part1 :: IO ()
+test_day8_part1 = do
+    text <- readFile "test_inputs/day8.txt"
+    let coors = map makeCoor $ lines text
+    let connections = findNClosest 10 $ generatePairs coors
+    let circuits = makeCircuits connections
+    let sorted = sortBy (\a -> \b -> compare (length a) (length b)) circuits
+    let answer = product $ take 3 $ map length $ reverse sorted
+    assertEqual "" 40 answer
+
+test_day8_part2 :: IO ()
+test_day8_part2 = do
+    text <- readFile "test_inputs/day8.txt"
+    let coors = map makeCoor $ lines text
+    let final_connection = continueCircuits coors :: Maybe Pair
+    let answer = fmap (\(Pair (Coor x1 _ _) (Coor x2 _ _)) -> x1 * x2) final_connection
+    assertEqual "" (Just 25272) answer
+
 main :: IO Counts
 main = do
   runTestTT tests
@@ -147,5 +166,8 @@ main = do
       TestLabel "test day6 part2" (TestCase test_day6_part2),
 
       TestLabel "test day7 part1" (TestCase test_day7_part1),
-      TestLabel "test day7 part2" (TestCase test_day7_part2)
+      TestLabel "test day7 part2" (TestCase test_day7_part2),
+
+      TestLabel "test day8 part1" (TestCase test_day8_part1),
+      TestLabel "test day8 part2" (TestCase test_day8_part2)
       ]
