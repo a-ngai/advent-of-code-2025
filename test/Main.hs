@@ -6,6 +6,9 @@ import Day3 ( makeCells, getMaxPower )
 import Day4 ( isAvailable, recurseAvailable )
 import Day5 ( parseRangesIngred, fulfill, Range (Range), removeOverlaps, lengthOverlaps )
 import Day6 ( evalQuestion, makeTable, makeQuestions, makeCeph, Question (Add, Mul) )
+import Day7 ( Path (Path), findStartingSplit, evolveBeam, findSplits, drawChart )
+
+import Data.List ( intersperse )
 
 import Test.HUnit (assertEqual, runTestTT, Test (TestList), Test (TestLabel), Test (TestCase) )
 import Test.HUnit (Counts)
@@ -98,6 +101,28 @@ test_day6_part2 = do
     let ceph_answer = sum $ map evalQuestion questions
     assertEqual "" 3263827 ceph_answer 
 
+test_day7_part1 :: IO ()
+test_day7_part1 = do
+    text <- readFile "test_inputs/day7.txt"
+    let chart = lines text
+    let start = findStartingSplit $ chart  :: [Path]
+    let beam = evolveBeam chart start  :: [[Path]]
+    let drawn = concat $ intersperse "\n" $ drawChart chart (concat beam)
+    let expected = ".......S.......\n.......|.......\n......|^|......\n......|.|......\n.....|^|^|.....\n.....|.|.|.....\n....|^|^|^|....\n....|.|.|.|....\n...|^|^|||^|...\n...|.|.|||.|...\n..|^|^|||^|^|..\n..|.|.|||.|.|..\n.|^|||^||.||^|.\n.|.|||.||.||.|.\n|^|^|^|^|^|||^|\n|.|.|.|.|.|||.|"
+    assertEqual "" expected drawn 
+
+    let answer = length $ findSplits chart (concat beam)
+    assertEqual "" 21 answer
+
+test_day7_part2 :: IO ()
+test_day7_part2 = do
+    text <- readFile "test_inputs/day7.txt"
+    let chart = lines text
+    let start = findStartingSplit $ chart  :: [Path]
+    let beam = evolveBeam chart start  :: [[Path]]
+    let answer = sum $ map (\(Path num _) -> num) $ concat $ take 1 $ reverse beam
+    assertEqual "" 40 answer
+
 main :: IO Counts
 main = do
   runTestTT tests
@@ -119,5 +144,8 @@ main = do
       TestLabel "test day5 part2" (TestCase test_day5_part2),
 
       TestLabel "test day6 part1" (TestCase test_day6_part1),
-      TestLabel "test day6 part2" (TestCase test_day6_part2)
+      TestLabel "test day6 part2" (TestCase test_day6_part2),
+
+      TestLabel "test day7 part1" (TestCase test_day7_part1),
+      TestLabel "test day7 part2" (TestCase test_day7_part2)
       ]
