@@ -67,7 +67,8 @@ library
         Day5,
         Day6,
         Day7,
-        Day8
+        Day8,
+        Day9
 
     -- Modules included in this library but not exported.
     -- other-modules:
@@ -76,7 +77,9 @@ library
     -- other-extensions:
 
     -- Other library packages from which modules are imported.
-    build-depends:    base ^>=4.21.0.0
+    build-depends:    
+        base ^>=4.21.0.0,
+        containers ^>=0.7
 
     -- Directories containing source files.
     hs-source-dirs:   src
@@ -100,6 +103,7 @@ executable advent-of-code2025
     -- Other library packages from which modules are imported.
     build-depends:
         base ^>=4.21.0.0,
+        containers ^>=0.7,
         advent-of-code2025
 
     -- Directories containing source files.
@@ -133,5 +137,6 @@ test-suite advent-of-code2025-test
     -- Test dependencies.
     build-depends:
         base ^>=4.21.0.0,
+        containers ^>=0.7,
         advent-of-code2025,
         HUnit^>=1.6

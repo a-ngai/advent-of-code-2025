@@ -8,6 +8,7 @@ import Day5 ( runDay5 )
 import Day6 ( runDay6 )
 import Day7 ( runDay7 )
 import Day8 ( runDay8 )
+import Day9 ( runDay9 )
 
 main :: IO ()
 main = do
@@ -18,4 +19,5 @@ main = do
   -- runDay5
   -- runDay6
   -- runDay7
-  runDay8
+  -- runDay8
+  runDay9
