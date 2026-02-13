@@ -1,4 +1,4 @@
-module Day8 ( runDay8, makeCoor, findNClosest, generatePairs, continueCircuits, makeCircuits, Coor (Coor), Pair (Pair) ) where
+module Day8 ( runDay8, makeCoor, findNClosest, generatePairs, continueCircuits, makeCircuits, Coor (Coor), Pair (Pair), splitDelim ) where
 
 import Data.List ( sortBy, nub )
 
