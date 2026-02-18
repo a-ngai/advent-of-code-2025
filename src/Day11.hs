@@ -1,5 +1,7 @@
 module Day11 ( runDay11 ) where
 
+import qualified Data.Map as Map
+
 data PreNode = PreNode { getInput::String, getOutput::[String] } deriving Show
 
 runDay11 :: IO ()
@@ -29,6 +31,7 @@ runDay11 = do
             (num_svr_to_fft * num_fft_to_dac * num_dac_to_out)
             + (num_svr_to_dac * num_dac_to_fft * num_fft_to_out)
             )
+
     putStrLn $ "Day 11 Part 2: " ++ (show num_passthrough)
 
 makePreNodes :: String -> [PreNode]
@@ -41,17 +44,27 @@ parseLines str = PreNode input outputs
         outputs = words $ drop 1 output_str
 
 memoPathNum :: [PreNode] -> String -> String -> Int
-memoPathNum prenodes start end = sum $ map snd $ filter ((==(start, end)) . fst) memoi
+memoPathNum prenodes start end = case Map.lookup (start, end) memoi_pathnum of
+    Just val -> val
+    Nothing -> 0
     where
         prenode_names = map getInput prenodes
-        keys = concat $ map (zipWith (,) prenode_names . repeat) prenode_names :: [(String, String)]
+        pair_keys = concat $ map (zipWith (,) prenode_names . repeat) prenode_names :: [(String, String)]
 
-        memoi :: [((String, String), Int)]
-        memoi = map (\key -> (key, makeMemoiEntry key)) keys
+        memoi_pathnum :: Map.Map (String, String) Int
+        memoi_pathnum = Map.fromList $ map (\key -> (key, makeMemoiEntry memoi_pathnum key)) pair_keys
 
-        makeMemoiEntry :: (String, String) -> Int
-        makeMemoiEntry (start', end')
+        child_map :: Map.Map String [String]
+        child_map = Map.fromList $ map (\(PreNode parent child) -> (parent, child)) prenodes
+
+        makeMemoiEntry :: Map.Map (String, String) Int -> (String, String) -> Int
+        makeMemoiEntry dict (start', end')
             | start' == end' = 1
-            | otherwise = sum $ map (\str -> sum $ map snd $ filter ((==(str, end')) . fst) memoi) next
+            | otherwise = case fmap sum $ sequence $ map (flip Map.lookup dict) pairs of
+                Just val -> val
+                Nothing -> error "makeMemoiEntry does not work!"
             where
-                next = concat $ map getOutput $ filter ((==start') . getInput) prenodes
+                next = case Map.lookup start' child_map of
+                    Just list -> list
+                    Nothing -> error "cannot find single entry!"
+                pairs = map (, end') next :: [(String, String)]
